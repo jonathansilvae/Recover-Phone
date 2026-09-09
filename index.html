@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +31,13 @@
 
       <form id="recoveryForm">
 
+          <!-- Campo de contacto opcional (Fase 3) -->
+          <input 
+              type="text" 
+              id="contactInfo" 
+              placeholder="Your Phone Number or Email (Optional)"
+          >
+
           <textarea
               id="message"
               placeholder="Where did you find this device? (e.g. coffee shop, train...)"
@@ -52,6 +58,39 @@
 
   </div>
 
+  <!-- Firebase SDKs e Inicialización -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Tu configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBghXyBlxz8yYHAUm1SN87SOqGnrMbbGBo",
+      authDomain: "recovery-phone-b20e8.firebaseapp.com",
+      projectId: "recovery-phone-b20e8",
+      storageBucket: "recovery-phone-b20e8.firebasestorage.app",
+      messagingSenderId: "1061760746533",
+      appId: "1:1061760746533:web:023fc6d3b78234696fabcc"
+    };
+
+    // Inicializar Firebase y Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Función accesible desde script.js para guardar el reporte
+    window.sendToFirebase = async function(data) {
+      try {
+        const docRef = await addDoc(collection(db, "reports"), data);
+        console.log("✅ Reporte guardado en Firestore con ID:", docRef.id);
+        return true;
+      } catch (error) {
+        console.error("❌ Error al guardar en Firebase:", error);
+        return false;
+      }
+    };
+  </script>
+
+  <!-- Script principal con la lógica de la app -->
   <script src="script.js"></script>
 </body>
 </html>
