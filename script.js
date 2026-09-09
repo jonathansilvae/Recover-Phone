@@ -46,16 +46,21 @@ if (locationBtn) {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
         locationData = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy + " meters"
+          latitude: lat,
+          longitude: lng,
+          accuracy: position.coords.accuracy + " meters",
+          googleMapsUrl: `https://www.google.com/maps?q=${lat},${lng}`
         };
 
         statusLocation.textContent = "✅ Location saved successfully!";
         statusLocation.style.color = "#059669";
         locationBtn.style.backgroundColor = "#059669";
-        console.log("Coordenadas GPS capturadas:", locationData);
+        
+        console.log("📍 Coordenadas capturadas con éxito:", locationData);
       },
       (error) => {
         console.warn("Error obtaining location:", error.message);
@@ -72,25 +77,30 @@ if (locationBtn) {
 }
 
 
-// 3. Captura y envío del formulario (Fase 3)
+// 3. Captura y envío del formulario evitando recarga
 const recoveryForm = document.getElementById("recoveryForm");
 
 if (recoveryForm) {
   recoveryForm.addEventListener("submit", (e) => {
-    e.preventDefault(); // Previene que la página se recargue
+    e.preventDefault(); // EVITA QUE LA PÁGINA SE RECARGUE Y SE LIMPIE LA CONSOLA
 
     const contactInput = document.getElementById("contactInfo");
     const messageInput = document.getElementById("message");
 
-    // Construcción del objeto final con todos los datos recopilados
     const reportPayload = {
       deviceInfo: systemData,
-      location: locationData || "No location provided",
+      location: locationData ? locationData : "No location provided",
       contact: contactInput ? contactInput.value : "N/A",
       message: messageInput.value
     };
 
-    console.log("🚀 Payload final listo para enviar a Firebase:", reportPayload);
+    console.log("🚀 PAYLOAD COMPLETO LISTO PARA ENVIAR A FIREBASE:");
+    console.log(reportPayload);
+
+    if (locationData) {
+      console.log("🗺️ Enlace directo a Google Maps:", locationData.googleMapsUrl);
+    }
+
     alert("Thank you! Your report has been submitted.");
   });
 }
