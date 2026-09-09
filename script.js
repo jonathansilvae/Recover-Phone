@@ -77,8 +77,9 @@ if (locationBtn) {
 }
 
 
-// 3. Captura y envío del formulario a Firebase Firestore
+// 3. Captura y envío del formulario a Firebase Firestore + Webhook (Make)
 const recoveryForm = document.getElementById("recoveryForm");
+const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/trhbqon23gv9pdoqns36fbp17g97pu80";
 
 if (recoveryForm) {
   recoveryForm.addEventListener("submit", async (e) => {
@@ -101,10 +102,17 @@ if (recoveryForm) {
     submitBtn.textContent = "Sending...";
     submitBtn.disabled = true;
 
-    // Guardar en la base de datos de Firebase
+    // A. Guardar en la base de datos de Firebase
     if (window.sendToFirebase) {
       const success = await window.sendToFirebase(reportPayload);
       if (success) {
+        // B. Enviar notificación al Webhook de Make
+        fetch(MAKE_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reportPayload)
+        }).catch(err => console.error("Error al enviar webhook:", err));
+
         alert("Thank you! Your report has been saved successfully.");
         recoveryForm.reset();
         
@@ -117,6 +125,14 @@ if (recoveryForm) {
       }
     } else {
       console.log("🚀 Payload listo (simulación sin Firebase):", reportPayload);
+      
+      // También dispara el webhook en modo de simulación
+      fetch(MAKE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reportPayload)
+      }).catch(err => console.error("Error al enviar webhook:", err));
+
       alert("Thank you! Your report has been submitted.");
     }
 
