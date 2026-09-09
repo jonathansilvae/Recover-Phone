@@ -1,41 +1,57 @@
 
-<div class="container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Vital para que se adapte perfectamente al tamaño de pantalla de los móviles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You found my Device!</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <h1>📱You found my Device!</h1>
+  <div class="container">
 
-    <p class="message">
-        Thank you for scanning this QR code !
-    </p>
+      <h1>📱You found my Device!</h1>
 
-    <p class="message">
-        This device is important to me and may contain valuable personal information.
-    </p>
+      <p class="message">
+          Thank you for scanning this QR code !
+      </p>
 
-    <p class="message">
-        If you found it, please leave a short message below. I would be extremely grateful :)
-    </p>
+      <p class="message">
+          This device is important to me and may contain valuable personal information.
+      </p>
 
-    <div class="reward-box">
-        As a thank you for your honesty and help, I would be happy to offer a reward for its safe return.
-    </div>
+      <p class="message">
+          If you found it, please leave a short message below. I would be extremely grateful :)
+      </p>
 
-    <form id="recoveryForm">
+      <div class="reward-box">
+          As a thank you for your honesty and help, I would be happy to offer a reward for its safe return.
+      </div>
 
-        <textarea
-            id="message"
-            placeholder="Where did you find this device?"
-            required>
-        </textarea>
+      <form id="recoveryForm">
 
-        <button type="button" id="locationBtn">
-            📍 Share My Location
-        </button>
+          <textarea
+              id="message"
+              placeholder="Where did you find this device? (e.g. coffee shop, train...)"
+              required></textarea>
 
-        <button type="submit">
-            Send Report
-        </button>
+          <button type="button" id="locationBtn">
+              📍 Share My Location
+          </button>
+          
+          <!-- Elemento de feedback para cuando capturemos el GPS -->
+          <p id="status-location"></p>
 
-    </form>
+          <button type="submit" id="submitBtn">
+              Send Report
+          </button>
 
-</div>
+      </form>
 
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
