@@ -1,7 +1,7 @@
 // Variables globales
 let locationData = null;
 
-// 1. Captura automática de información técnica
+// 1. Captura automática de información técnica del dispositivo
 function captureDeviceInfo() {
   const nav = navigator;
   const userAgent = nav.userAgent;
@@ -69,7 +69,7 @@ if (locationBtn) {
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 30000, // 30 segundos de margen para alta precisión
         maximumAge: 0
       }
     );
@@ -77,30 +77,51 @@ if (locationBtn) {
 }
 
 
-// 3. Captura y envío del formulario evitando recarga
+// 3. Captura y envío del formulario a Firebase Firestore
 const recoveryForm = document.getElementById("recoveryForm");
 
 if (recoveryForm) {
-  recoveryForm.addEventListener("submit", (e) => {
-    e.preventDefault(); // EVITA QUE LA PÁGINA SE RECARGUE Y SE LIMPIE LA CONSOLA
+  recoveryForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Previene la recarga de la página
 
     const contactInput = document.getElementById("contactInfo");
     const messageInput = document.getElementById("message");
+    const submitBtn = document.getElementById("submitBtn");
 
+    // Construcción del paquete de datos final
     const reportPayload = {
       deviceInfo: systemData,
       location: locationData ? locationData : "No location provided",
       contact: contactInput ? contactInput.value : "N/A",
-      message: messageInput.value
+      message: messageInput.value,
+      createdAt: new Date().toISOString()
     };
 
-    console.log("🚀 PAYLOAD COMPLETO LISTO PARA ENVIAR A FIREBASE:");
-    console.log(reportPayload);
+    // Cambiar estado del botón mientras envía
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
 
-    if (locationData) {
-      console.log("🗺️ Enlace directo a Google Maps:", locationData.googleMapsUrl);
+    // Guardar en la base de datos de Firebase
+    if (window.sendToFirebase) {
+      const success = await window.sendToFirebase(reportPayload);
+      if (success) {
+        alert("Thank you! Your report has been saved successfully.");
+        recoveryForm.reset();
+        
+        // Resetear el estado de ubicación tras el envío
+        locationData = null;
+        if (statusLocation) statusLocation.textContent = "";
+        if (locationBtn) locationBtn.style.backgroundColor = "";
+      } else {
+        alert("There was an error saving your report. Please try again.");
+      }
+    } else {
+      console.log("🚀 Payload listo (simulación sin Firebase):", reportPayload);
+      alert("Thank you! Your report has been submitted.");
     }
 
-    alert("Thank you! Your report has been submitted.");
+    // Restaurar botón
+    submitBtn.textContent = "Send Report";
+    submitBtn.disabled = false;
   });
 }
