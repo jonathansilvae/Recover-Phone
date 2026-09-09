@@ -1,3 +1,4 @@
+
 <div class="container">
 
     <h1>📱 Lost Device Recovery</h1>
@@ -7,35 +8,34 @@
     </p>
 
     <p class="message">
-        This device is important to me and may contain valuable personal information
+        This device is important to me and may contain valuable personal information.
     </p>
 
     <p class="message">
-        If you found it, please leave a short message below. I would be extremely greatful :)
+        If you found it, please leave a short message below. I would be extremely grateful :)
     </p>
 
     <div class="reward-box">
         As a thank you for your honesty and help, I would be happy to offer a reward for its safe return.
     </div>
 
-</div>
+    <form id="recoveryForm">
 
-<form id="recoveryForm">
+        <textarea
+            id="message"
+            placeholder="Where did you find this device?"
+            required>
+        </textarea>
 
-    <textarea
-        id="message"
-        placeholder="Where did you find this device?"
-        required>
-    </textarea>
+        <button type="button" id="locationBtn">
+            📍 Share My Location
+        </button>
 
-    <button type="button" id="locationBtn">
-        📍 Share My Location
-    </button>
+        <button type="submit">
+            Send Report
+        </button>
 
-    <button type="submit">
-        Send Report
-    </button>
+    </form>
 
-</form>
 </div>
 
