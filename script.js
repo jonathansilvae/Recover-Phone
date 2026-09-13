@@ -144,26 +144,20 @@ if (recoveryForm) {
   });
 }
 
-// 4. Generación dinámica del Código QR
+// 4. Generación dinámica del Código QR (Método garantizado sin dependencias)
 function generateDynamicQR() {
   const qrContainer = document.getElementById("qrcode-container");
   
   if (!qrContainer) return;
 
-  qrContainer.innerHTML = "";
+  const currentUrl = encodeURIComponent(window.location.href);
+  
+  // Genera una imagen limpia en alta resolución para imprimir
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${currentUrl}&ecc=H`;
 
-  const currentUrl = window.location.href;
+  qrContainer.innerHTML = `<img src="${qrImageUrl}" alt="Device QR Code" style="border: 1px solid #e5e7eb; padding: 8px; background: #fff; border-radius: 8px;" />`;
 
-  new QRCode(qrContainer, {
-    text: currentUrl,
-    width: 200,
-    height: 200,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
-
-  console.log("🔗 QR generado automáticamente para:", currentUrl);
+  console.log("🔗 QR generado con éxito para:", window.location.href);
 }
 
 document.addEventListener("DOMContentLoaded", generateDynamicQR);
