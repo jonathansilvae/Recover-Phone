@@ -65,8 +65,8 @@ if (locationBtn) {
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000, // Ajustado a 15s para evitar bloqueos largos
-        maximumAge: 0   // Fuerza la lectura en tiempo real sin usar datos en caché
+        timeout: 15000,
+        maximumAge: 0
       }
     );
   });
@@ -78,16 +78,14 @@ const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/trhbqon23gv9pdoqns36fbp17g97
 
 if (recoveryForm) {
   recoveryForm.addEventListener("submit", async (e) => {
-    e.preventDefault(); // Previene la recarga de la página
+    e.preventDefault();
 
     const contactInput = document.getElementById("contactInfo");
     const messageInput = document.getElementById("message");
     const submitBtn = document.getElementById("submitBtn");
 
-    // Recapturar la información del sistema al enviar para asegurar frescura de datos
     const systemData = captureDeviceInfo();
 
-    // Estructurar fallback de ubicación si el usuario no activó la localización
     const locationPayload = locationData ? locationData : {
       latitude: "N/A",
       longitude: "N/A",
@@ -95,7 +93,6 @@ if (recoveryForm) {
       googleMapsUrl: "No location attached"
     };
 
-    // Construcción del paquete de datos final con sanitización de nulos
     const reportPayload = {
       deviceInfo: systemData,
       location: locationPayload,
@@ -104,15 +101,12 @@ if (recoveryForm) {
       createdAt: new Date().toISOString()
     };
 
-    // Cambiar estado del botón mientras envía
     submitBtn.textContent = "Sending...";
     submitBtn.disabled = true;
 
-    // A. Guardar en la base de datos de Firebase
     if (window.sendToFirebase) {
       const success = await window.sendToFirebase(reportPayload);
       if (success) {
-        // B. Enviar notificación al Webhook de Make
         fetch(MAKE_WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -122,7 +116,6 @@ if (recoveryForm) {
         alert("Thank you! Your report has been saved successfully.");
         recoveryForm.reset();
         
-        // Resetear el estado de ubicación tras el envío
         locationData = null;
         if (statusLocation) statusLocation.textContent = "";
         if (locationBtn) locationBtn.style.backgroundColor = "";
@@ -132,7 +125,6 @@ if (recoveryForm) {
     } else {
       console.log("🚀 Payload listo (simulación sin Firebase):", reportPayload);
       
-      // Disparar el webhook en modo de simulación
       fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -147,8 +139,31 @@ if (recoveryForm) {
       if (locationBtn) locationBtn.style.backgroundColor = "";
     }
 
-    // Restaurar botón
     submitBtn.textContent = "Send Report";
     submitBtn.disabled = false;
   });
 }
+
+// 4. Generación dinámica del Código QR
+function generateDynamicQR() {
+  const qrContainer = document.getElementById("qrcode-container");
+  
+  if (!qrContainer) return;
+
+  qrContainer.innerHTML = "";
+
+  const currentUrl = window.location.href;
+
+  new QRCode(qrContainer, {
+    text: currentUrl,
+    width: 200,
+    height: 200,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  console.log("🔗 QR generado automáticamente para:", currentUrl);
+}
+
+document.addEventListener("DOMContentLoaded", generateDynamicQR);
