@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>You found my Device!</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Librería externa para generación de QR -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -32,7 +30,6 @@
 
       <form id="recoveryForm">
 
-          <!-- Campo de contacto opcional -->
           <input 
               type="text" 
               id="contactInfo" 
@@ -48,7 +45,6 @@
               📍 Share My Location
           </button>
           
-          <!-- Elemento de feedback para cuando capturemos el GPS -->
           <p id="status-location"></p>
 
           <button type="submit" id="submitBtn">
@@ -57,12 +53,12 @@
 
       </form>
 
-      <!-- Contenedor del QR dentro del body/container -->
+      <!-- Contenedor simple para la imagen del QR -->
       <div id="qrcode-container" style="display: flex; justify-content: center; margin-top: 25px;"></div>
 
   </div>
 
-  <!-- Firebase SDKs e Inicialización -->
+  <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -91,7 +87,6 @@
     };
   </script>
 
-  <!-- Script principal con la lógica de la app -->
   <script src="script.js"></script>
 </body>
 </html>
