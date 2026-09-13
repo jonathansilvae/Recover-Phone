@@ -18,16 +18,12 @@ function captureDeviceInfo() {
   return {
     timestamp: new Date().toISOString(),
     localTime: new Date().toLocaleString(),
-    language: nav.language || nav.userLanguage,
+    language: nav.language || nav.userLanguage || "N/A",
     os: os,
     deviceType: isMobile,
     userAgent: userAgent
   };
 }
-
-const systemData = captureDeviceInfo();
-console.log("Información técnica del dispositivo:", systemData);
-
 
 // 2. Evento para obtener la ubicación GPS
 const locationBtn = document.getElementById("locationBtn");
@@ -69,13 +65,12 @@ if (locationBtn) {
       },
       {
         enableHighAccuracy: true,
-        timeout: 30000, // 30 segundos de margen para alta precisión
-        maximumAge: 0
+        timeout: 15000, // Ajustado a 15s para evitar bloqueos largos
+        maximumAge: 0   // Fuerza la lectura en tiempo real sin usar datos en caché
       }
     );
   });
 }
-
 
 // 3. Captura y envío del formulario a Firebase Firestore + Webhook (Make)
 const recoveryForm = document.getElementById("recoveryForm");
@@ -89,12 +84,23 @@ if (recoveryForm) {
     const messageInput = document.getElementById("message");
     const submitBtn = document.getElementById("submitBtn");
 
-    // Construcción del paquete de datos final
+    // Recapturar la información del sistema al enviar para asegurar frescura de datos
+    const systemData = captureDeviceInfo();
+
+    // Estructurar fallback de ubicación si el usuario no activó la localización
+    const locationPayload = locationData ? locationData : {
+      latitude: "N/A",
+      longitude: "N/A",
+      accuracy: "Not provided",
+      googleMapsUrl: "No location attached"
+    };
+
+    // Construcción del paquete de datos final con sanitización de nulos
     const reportPayload = {
       deviceInfo: systemData,
-      location: locationData ? locationData : "No location provided",
-      contact: contactInput ? contactInput.value : "N/A",
-      message: messageInput.value,
+      location: locationPayload,
+      contact: contactInput && contactInput.value.trim() !== "" ? contactInput.value.trim() : "No contact provided",
+      message: messageInput && messageInput.value.trim() !== "" ? messageInput.value.trim() : "No message provided",
       createdAt: new Date().toISOString()
     };
 
@@ -126,7 +132,7 @@ if (recoveryForm) {
     } else {
       console.log("🚀 Payload listo (simulación sin Firebase):", reportPayload);
       
-      // También dispara el webhook en modo de simulación
+      // Disparar el webhook en modo de simulación
       fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -134,6 +140,11 @@ if (recoveryForm) {
       }).catch(err => console.error("Error al enviar webhook:", err));
 
       alert("Thank you! Your report has been submitted.");
+      recoveryForm.reset();
+      
+      locationData = null;
+      if (statusLocation) statusLocation.textContent = "";
+      if (locationBtn) locationBtn.style.backgroundColor = "";
     }
 
     // Restaurar botón
