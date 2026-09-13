@@ -2,21 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Vital para que se adapte perfectamente al tamaño de pantalla de los móviles -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>You found my Device!</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Librería externa para generación de QR -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <div id="qrcode-container" style="display: flex; justify-content: center; margin-top: 20px;"></div>
 </head>
 <body>
 
   <div class="container">
 
-      <h1>📱You found my Device!</h1>
+      <h1>📱 You found my Device!</h1>
 
       <p class="message">
-          Thank you for scanning this QR code !
+          Thank you for scanning this QR code!
       </p>
 
       <p class="message">
@@ -33,7 +32,7 @@
 
       <form id="recoveryForm">
 
-          <!-- Campo de contacto opcional (Fase 3) -->
+          <!-- Campo de contacto opcional -->
           <input 
               type="text" 
               id="contactInfo" 
@@ -58,6 +57,9 @@
 
       </form>
 
+      <!-- Contenedor del QR dentro del body/container -->
+      <div id="qrcode-container" style="display: flex; justify-content: center; margin-top: 25px;"></div>
+
   </div>
 
   <!-- Firebase SDKs e Inicialización -->
@@ -65,7 +67,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Tu configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBghXyBlxz8yYHAUm1SN87SOqGnrMbbGBo",
       authDomain: "recovery-phone-b20e8.firebaseapp.com",
@@ -75,11 +76,9 @@
       appId: "1:1061760746533:web:023fc6d3b78234696fabcc"
     };
 
-    // Inicializar Firebase y Firestore
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Función accesible desde script.js para guardar el reporte
     window.sendToFirebase = async function(data) {
       try {
         const docRef = await addDoc(collection(db, "reports"), data);
